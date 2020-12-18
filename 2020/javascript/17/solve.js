@@ -10,6 +10,8 @@ function printUsage() {
 
 function getArgvs() {
   let file = argv.file;
+  let dimension = argv.dimension ? parseInt(argv.dimension) : 3;
+  let cycles = argv.cycles ? parseInt(argv.cycles) : 5;
 
   if (!file) {
     console.error(`Missing file`);
@@ -17,7 +19,7 @@ function getArgvs() {
     process.exit(1);
   }
 
-  return { file };
+  return { file, dimension, cycles };
 }
 
 function setCube(grid, point, value) {
@@ -70,15 +72,15 @@ function removeInactiveCubes(grid) {
   });
 }
 
-function parseInput(content) {
+function parseInput(content, dimension) {
   let grid = {};
   const lines = content.split('\n');
   for (let i = 0; i < lines.length; i++) {
     const chars = lines[i].split('');
     for (let j = 0; j < chars.length; j++) {
-      const z = 0;
       if (chars[j] === '#') {
-        setCube(grid, [i, j, 0], ACTIVE);
+        const extraCoords = (new Array(dimension - 2)).fill(0);
+        setCube(grid, [i, j, ...extraCoords], ACTIVE);
       }
     }
   }
@@ -148,8 +150,6 @@ function allGridPoints(grid) {
   return allPoints;
 }
 
-
-
 function playCycle(grid) {
   let newGrid = {};
   const gridPoints = allGridPoints(grid);
@@ -165,112 +165,38 @@ function playCycle(grid) {
   return newGrid;
 }
 
-/*
-function playCycle(grid) {
-  let newGrid = {};
-  Object.keys(grid).sort((a,b)=> parseInt(a) - parseInt(b)).forEach(x => {
-    Object.keys(grid[x]).sort((a,b)=> parseInt(a) - parseInt(b)).forEach(y => {
-      Object.keys(grid[x][y]).sort((a,b)=> parseInt(a) - parseInt(b)).forEach(z => {
-        x = parseInt(x);
-        y = parseInt(y);
-        z = parseInt(z);
-        for (let i = x - 1; i <= x + 1; i++) {
-          for (let j = y - 1; j <= y + 1; j++) {
-            for (let k = z - 1; k <= z + 1; k++) {
-              if (!newGrid[i] || !newGrid[i][j] || !newGrid[i][j][k] ) {
-                const newState = getNewActivatedState(grid, [i, j, k]);
-                setCube(newGrid, [i, j, k], newState);
-              }
-            }
-          }
-        }
-      });
-    })
-  });
-  return newGrid;
-}
-
-
- */
 function countActivated(grid) {
-  let cnt = 0;
-  for(const x in grid) {
-    for (const y in grid[x]) {
-      cnt += Object.keys(grid[x][y]).length;
-    }
-  }
-  return cnt;
+  const gridPoints = allGridPoints(grid);
+  return gridPoints.length;
 }
 
-function printGrid(grid, zLevels) {
-  let minX = 100000;
-  let minY = 100000;
-  let maxX = -100000;
-  let maxY = -100000;
-  for(let x in grid) {
-    x = parseInt(x);
-    minX = x < minX ? x : minX;
-    maxX = x > maxX ? x : maxX;
-    for(let y in grid[x]) {
-      y = parseInt(y);
-      minY = y < minY ? y : minY;
-      maxY = y > maxY ? y : maxY;
-    }
-  }
-
-  for (let z = -zLevels; z <= zLevels; z++) {
-    let lines = [];
-    for(let x = minX; x <= maxX; x++) {
-      let line = '';
-      for(let y = minY; y <= maxY; y++) {
-        line += isActivated(grid, [x, y, z]) ? '#' : '.';
-      }
-      lines.push(line);
-    }
-    console.log(`z=${z}`);
-    console.log(lines.join('\n'));
-    console.log(`\n\n`);
-  }
-}
-
-function solution1a(grid) {
+function solution1a(grid, cycles) {
   let finalGrid = grid;
-  printGrid(finalGrid, 0);
 
-  for (let cycle = 0; cycle < 6; cycle++) {
+  for (let cycle = 0; cycle < cycles; cycle++) {
+    let startTime = new Date().getTime();
     finalGrid = playCycle(finalGrid);
     removeInactiveCubes(finalGrid);
-    console.log(`Cycle: ${cycle + 1}`);
-    printGrid(finalGrid, cycle + 1);
+    let endTime = new Date().getTime();
+    console.log(`Cycle: ${cycle + 1}\tCount: ${countActivated(finalGrid)}\ttime:${endTime - startTime}ms`);
   }
 
   return countActivated(finalGrid);
 }
 
 
-function solution2a(rules, myTicket, validTickets) {
-  return null;
-}
-
 (function run() {
   try {
-    const { file } = getArgvs();
+    const { file, dimension, cycles } = getArgvs();
     const content = fs.readFileSync(file, { encoding:'utf8' }).trim();
-    const grid = parseInput(content);
+    const grid = parseInput(content, dimension);
 
     let startTime = new Date().getTime();
-    let result = solution1a(grid);
+    let result = solution1a(grid, cycles);
     let endTime = new Date().getTime();
     console.log(`Solution 1.a: ${endTime - startTime} ms`);
     console.log(result);
-/*
-    startTime = new Date().getTime();
-    let result = solution2a(rules, myTicket, validTickets);
-    endTime = new Date().getTime();
-    console.log(`Solution 2.a: ${endTime - startTime} ms`);
-    console.log(` answer is: ${result}`);
 
- */
   } catch (error) {
     console.error(error);
     process.exit(1);
