@@ -178,7 +178,7 @@ function solution1a(grid, cycles) {
     finalGrid = playCycle(finalGrid);
     removeInactiveCubes(finalGrid);
     let endTime = new Date().getTime();
-    console.log(`Cycle: ${cycle + 1}\tCount: ${countActivated(finalGrid)}\ttime:${endTime - startTime}ms`);
+    console.log(`Cycle: ${cycle + 1}\tCount: ${countActivated(finalGrid)}\ttime:${endTime}`);
   }
 
   return countActivated(finalGrid);
