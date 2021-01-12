@@ -9,6 +9,8 @@
   "author": "Fei Xie",
   "license": "ISC",
   "dependencies": {
+    "fraction.js": "^4.0.13",
+    "mathjs": "^8.1.0",
     "yargs": "^16.1.1"
   }
 }
