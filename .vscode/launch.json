@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "pwa-node",
+            "name": "2021 3rd day",
+            "request": "launch",
+            "runtimeArgs": ["--experimental-modules"],
+            "program": "${workspaceFolder}/2021/javascript/3/solve.js",
+            "args": [
+                "--file=${workspaceFolder}/2021/javascript/3/example.txt"
+            ]
+        },
+        {
+            "type": "pwa-node",
+            "name": "2021 5th day",
+            "request": "launch",
+            "runtimeArgs": ["--experimental-modules"],
+            "program": "${workspaceFolder}/2021/javascript/5/solve.js",
+            "args": [
+                "--file=${workspaceFolder}/2021/javascript/5/example.txt"
+            ]
+        }
+    ]
+}
