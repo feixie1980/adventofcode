@@ -321,21 +321,15 @@ function solution() {
   console.log(`Total found: ${exprs.length}`);
   //console.log(JSON.stringify(map.get(getKey(1, 2, 2)), replacer, 2));
   //console.log(JSON.stringify(repeatFractionMap, replacer, 2));
-
 }
 
 (function run() {
   try {
     getArgvs();
     let startTime = new Date().getTime();
-    //solution();
+    solution();
     let endTime = new Date().getTime();
     console.log(`Solution 1.a: ${endTime - startTime} ms`);
-
-    let b = math.format(math.evaluate('1 / 6'), {precision: 14});
-    let a = new Fraction(`${b}`);
-    console.log(b);
-    //console.log(math.evaluate('2.3! + 2'))
 
   } catch (error) {
     console.error(error);

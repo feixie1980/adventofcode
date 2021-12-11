@@ -12,22 +12,12 @@
         },
         {
             "type": "pwa-node",
-            "name": "2021 3rd day",
+            "name": "2021 8th day",
             "request": "launch",
             "runtimeArgs": ["--experimental-modules"],
-            "program": "${workspaceFolder}/2021/javascript/3/solve.js",
+            "program": "${workspaceFolder}/2021/javascript/8/solve.js",
             "args": [
-                "--file=${workspaceFolder}/2021/javascript/3/example.txt"
-            ]
-        },
-        {
-            "type": "pwa-node",
-            "name": "2021 5th day",
-            "request": "launch",
-            "runtimeArgs": ["--experimental-modules"],
-            "program": "${workspaceFolder}/2021/javascript/5/solve.js",
-            "args": [
-                "--file=${workspaceFolder}/2021/javascript/5/example.txt"
+                "--file=${workspaceFolder}/2021/javascript/8/example.txt"
             ]
         }
     ]
