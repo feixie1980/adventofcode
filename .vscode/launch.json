@@ -12,12 +12,12 @@
         },
         {
             "type": "pwa-node",
-            "name": "2021 8th day",
+            "name": "2021 9th day",
             "request": "launch",
             "runtimeArgs": ["--experimental-modules"],
-            "program": "${workspaceFolder}/2021/javascript/8/solve.js",
+            "program": "${workspaceFolder}/2021/javascript/9/solve.js",
             "args": [
-                "--file=${workspaceFolder}/2021/javascript/8/example.txt"
+                "--file=${workspaceFolder}/2021/javascript/9/example.txt"
             ]
         }
     ]
