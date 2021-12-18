@@ -1,0 +1,6 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/dodofi/projects/adventofcode/2021/javascript/11/manim/media/videos/animate/720p30/partial_movie_files/MovingAngle/1342159004_3493041802_4140102868.mp4'
+file 'file:/Users/dodofi/projects/adventofcode/2021/javascript/11/manim/media/videos/animate/720p30/partial_movie_files/MovingAngle/1353618911_578713845_2929823437.mp4'
+file 'file:/Users/dodofi/projects/adventofcode/2021/javascript/11/manim/media/videos/animate/720p30/partial_movie_files/MovingAngle/1353618911_1515667495_4123492325.mp4'
+file 'file:/Users/dodofi/projects/adventofcode/2021/javascript/11/manim/media/videos/animate/720p30/partial_movie_files/MovingAngle/1353618911_1413464715_2885484559.mp4'
+file 'file:/Users/dodofi/projects/adventofcode/2021/javascript/11/manim/media/videos/animate/720p30/partial_movie_files/MovingAngle/1353618911_198711207_25029992.mp4'
