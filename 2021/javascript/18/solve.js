@@ -28,6 +28,10 @@ function parseInput(content) {
   return numbers;
 }
 
+function parseInput_text(content) {
+  return content.split('\n');
+}
+
 // Get a SNNumber from the start of the str, may match only part of the string
 function obtainSNNumber(str) {
   let strPos = 0;
@@ -198,11 +202,133 @@ function add(n1, n2) {
   return sum;
 }
 
+/* Text manipulation implementation */
+function indexToExplode(numStr) {
+  let numOpenBrackets  = 0;
+  for (let i = 0; i < numStr.length; i++) {
+    const c = numStr[i];
+    if (c === '[') {
+      numOpenBrackets++;
+      const regNumPairs = numStr.substring(i).match(/^\[\d+,\d+\]/g);
+      if (regNumPairs && numOpenBrackets >= 5)
+        return { idx:i, explodePair: regNumPairs[0] };
+    }
+    else if (c === ']') {
+      numOpenBrackets--;
+    }
+  }
+  return { idx: -1, explodePair: null };
+}
+
+function addToNearestLeftValue_text(numStr, value) {
+  let i = numStr.length - 1;
+  while (isNaN(numStr[i]) && i >= 0) {
+    i--;
+  }
+  if (i === -1) {
+    return numStr; // no nearest left value found, no change
+  }
+
+  let valueStr = '';
+  while (!isNaN(numStr[i])) {
+    valueStr = numStr[i] + valueStr;
+    i--;
+  }
+  i++;
+  return `${numStr.substring(0, i)}${parseInt(valueStr) + value}${numStr.substring(i + valueStr.length)}`;
+}
+
+function addToNearestRightValue_text(numStr, value) {
+  let i = 0;
+  while (isNaN(numStr[i]) && i < numStr.length) {
+    i++;
+  }
+  if (i === numStr.length) {
+    return numStr; // no nearest right value found, no change
+  }
+
+
+  let valueStr = '';
+  while (!isNaN(numStr[i])) {
+    valueStr = valueStr + numStr[i];
+    i++;
+  }
+  return `${numStr.substring(0, i - valueStr.length)}${parseInt(valueStr) + value}${numStr.substring(i)}`;
+
+}
+
+function explode_text(numStr) {
+  const { idx, explodePair } = indexToExplode(numStr);
+  if (idx === -1) {
+    return numStr;
+  }
+  const { left, right } = parseSNNumber(explodePair); // get [l,r]
+  let leftPart = addToNearestLeftValue_text(numStr.substring(0, idx), left);
+  let rightPart = addToNearestRightValue_text(numStr.substring(idx + explodePair.length), right);
+  return `${leftPart}0${rightPart}`; // replace [l,r] with 0
+}
+
+function findSplits_text(numStr) {
+  let splits = [];
+  let i = 0;
+  while(i < numStr.length) {
+    const regNums = numStr.substring(i).match(/^\d+/g); //match any number that starts at i
+    if (!regNums || regNums[0].length === 1) {
+      i++;
+    }
+    else {
+      // found a value to split
+      splits.push({
+        index: i,
+        value: parseInt(regNums[0])
+      });
+      i += regNums[0].length;
+    }
+  }
+  return splits;
+}
+
+function split_text(numStr) {
+  let splits = findSplits_text(numStr);
+  if (splits.length === 0) {
+    return numStr;
+  }
+  const {index, value} = splits[0];
+  const newPair = `[${Math.floor(value / 2)},${Math.ceil(value / 2)}]`;
+  return `${numStr.substring(0, index)}${newPair}${numStr.substring(index + 2)}`;
+}
+
+function add_text(numStr1, numStr2) {
+  if (!numStr1) {
+    return numStr2
+  }
+
+  if (!numStr2) {
+    return numStr1
+  }
+
+  // first combine numStr1 and numStr2
+  let sum = `[${numStr1},${numStr2}]`;
+
+  // reduction
+  while(true) {
+    const exploded = explode_text(sum);
+    const newSum = split_text(exploded);
+    if (newSum === sum) {
+      break;
+    }
+    sum = newSum;
+  }
+
+  return sum;
+}
+
 function solution1(numbers) {
+  let sum = null;
   for(const number of numbers) {
-    console.log(stringifySNumber(number));
-    let newNumber = explode(number)
-    console.log(`explode: ${stringifySNumber(newNumber)}`);
+    console.log(`+ ${number}`);
+    sum = add_text(sum, number);
+    console.log(`sum: ${sum}`);
   }
   return false;
 }
@@ -215,7 +341,7 @@ function solution2(input) {
   try {
     const { file } = getArgvs();
     const content = readFileSync(file, { encoding:'utf8' }).trim();
-    const numbers = parseInput(content);
+    const numbers = parseInput_text(content);
 
     let startTime = new Date().getTime();
     let answer = solution1(numbers);
