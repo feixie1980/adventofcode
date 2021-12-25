@@ -1,6 +1,22 @@
 import { readFileSync } from 'fs';
 import Yargs from "yargs";
 
+class QuantumDice {
+  constructor() {
+    this.results = [];
+
+    // initialize quantum dice results
+    for (let i = 1; i <= 3; i++)
+      for (let j = 1; j <= 3; j++)
+        for (let k = 1; k <= 3; k++)
+          this.results.push([i, j, k]);
+  }
+
+  roll3Times = () => {
+    return this.results;
+  };
+}
+
 const quantumDice = new QuantumDice();
 const WINNING_SCORE = 21;
 
@@ -75,22 +91,6 @@ function solution1(starts) {
   }
 }
 
-class QuantumDice {
-  constructor() {
-    this.results = [];
-
-    // initialize quantum dice results
-    for (let i = 1; i <= 3; i++)
-      for (let j = 1; j <= 3; j++)
-        for (let k = 1; k <= 3; k++)
-          this.results.push([i, j, k]);
-  }
-
-  roll3Times = () => {
-    return this.results;
-  };
-}
-
 function compute(rollResult, position, score) {
   let steps = (rollResult[0] + rollResult[1] + rollResult[2]) % 10; // how many actual steps forward
   let newPosition = position + steps;
@@ -140,7 +140,7 @@ function playQuantumTurn(universes) {
 }
 
 function getUniverseKey(universe) {
-  return `${universe.positions.join('-')}:${universe.scope.join('-')}`;
+  return `${universe.positions.join('-')}:${universe.scores.join('-')}`;
 }
 
 /* 2nd version */
@@ -148,8 +148,8 @@ function playPlayer_collapsed(player, universeMap) {
   const rollResults = quantumDice.roll3Times();
   let newUniverseMap = new Map(), win = 0;
 
-  for (const entry of universeMap.entities()) {
-    const { universeKey, universe } = entry;
+  for (const entry of universeMap.entries()) {
+    const [ universeKey, universe ] = entry;
     const { positions, scores, count } = universe;
     for (const rollResult of rollResults) { // splitting the universe!
       const { newPosition, newScore } = compute(rollResult, positions[player], scores[player]);
@@ -177,15 +177,13 @@ function playPlayer_collapsed(player, universeMap) {
 function playQuantumTurn_collapsed(universeMap) {
   let wins = [0, 0];
 
-  let result = playPlayer(0, universeMap);
+  let result = playPlayer_collapsed(0, universeMap);
   let newUniverseMap = result.newUniverseMap;
   wins[0] = result.win;
-  console.log(`\tplayer 1 -\tuniverse size: ${newUniverseMap.size}\twins:${wins[0]}`);
 
-  result = playPlayer(1, newUniverseMap);
+  result = playPlayer_collapsed(1, newUniverseMap);
   newUniverseMap = result.newUniverseMap;
   wins[1] = result.win;
-  console.log(`\tplayer 2 -\tuniverse size: ${newUniverseMap.length}\twins:${wins[1]}`);
 
   return { newUniverseMap, wins };
 }
@@ -215,10 +213,12 @@ function solution2_collapsed(starts) {
   let turn = 1;
   while(universeMap.size !== 0) {
     console.log(`turn ${turn++}`);
-    const { newUniverses, wins } = playQuantumTurn_collapsed(universeMap);
-    universes = newUniverses;
+    const { newUniverseMap, wins } = playQuantumTurn_collapsed(universeMap);
+    universeMap = newUniverseMap;
     totalWins[0] += wins[0];
     totalWins[1] += wins[1];
+    const size = [...newUniverseMap.values()].reduce((sum, universe) => sum + universe.count, 0);
+    console.log(`\tuniverse size: ${size}`);
   }
 
   return Math.max(...totalWins);
@@ -235,15 +235,15 @@ function solution2_collapsed(starts) {
     let endTime = new Date().getTime();
     console.log(`Solution 1: ${endTime - startTime} ms`);
     console.log(answer);
-
-    /*
+    
+    /*  Does not work, run out of memory
     startTime = new Date().getTime();
     answer = solution2(starts);
     endTime = new Date().getTime();
     console.log(`Solution 2: ${endTime - startTime} ms`);
-    console.log(answer);
-     */
-
+    console.log(answer);    
+    */
+     
     startTime = new Date().getTime();
     answer = solution2_collapsed(starts);
     endTime = new Date().getTime();
