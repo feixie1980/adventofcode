@@ -25,9 +25,9 @@
             "name": "2021 22nd day - multithread",
             "request": "launch",
             "runtimeArgs": ["--experimental-modules"],
-            "program": "${workspaceFolder}/2021/javascript/22/solve_cube.js",
+            "program": "${workspaceFolder}/2021/javascript/23/solve.js",
             "args": [
-                "--file=${workspaceFolder}/2021/javascript/22/example.txt",
+                "--file=${workspaceFolder}/2021/javascript/23/example2.txt",
                 "--isInit=true"
             ]
         }
